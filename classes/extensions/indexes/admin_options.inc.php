@@ -39,7 +39,12 @@ $form_data                             = WpSolrExtensions::extract_form_data( $i
 		$subtabs[ $index_indice ] = isset( $index['index_name'] ) ? $index['index_name'] : 'Index with no name';
 	}
 
-	$subtabs['new_index'] = count( $option_object->get_indexes() ) > 0 ? $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Configure another index', false ) : 'Configure your first index';
+	if ( count( $option_object->get_indexes() ) <= 0 ) {
+		$subtabs['new_index'] = 'Configure your first index';
+	}
+	if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_MULTI_INDEX ) ) ) {
+		require $file_to_include;
+	}
 
 	// Create subtabs on the left side
 	$subtab = wpsolr_admin_sub_tabs( $subtabs );
@@ -171,7 +176,8 @@ $form_data                             = WpSolrExtensions::extract_form_data( $i
 						<div class="wdm_note">
 
 							WPSOLR is compatible with the Solr versions listed at the following page: <a
-								href="<?php echo $license_manager->add_campaign_to_url( 'https://www.wpsolr.com/kb/apache-solr/apache-solr-configuration-files/' ); ?>" target="__wpsolr">Compatible Solr versions</a>.
+								href="<?php echo $license_manager->add_campaign_to_url( 'https://www.wpsolr.com/kb/apache-solr/apache-solr-configuration-files/' ); ?>"
+								target="__wpsolr">Compatible Solr versions</a>.
 
 							Your first action must be to download the two configuration files (schema.xml,
 							solrconfig.xml) listed in the online release section, and upload them to your Solr instance.

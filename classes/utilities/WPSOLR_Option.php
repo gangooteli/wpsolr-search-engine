@@ -893,4 +893,19 @@ class WPSOLR_Option {
 		return $this->get_option_value( __FUNCTION__, self::OPTION_PLUGIN_ACF, self::OPTION_PLUGIN_ACF_GOOGLE_MAP_API_KEY, '' );
 	}
 
+	/***************************************************************************************************************
+	 *
+	 * Premium options
+	 *
+	 **************************************************************************************************************/
+	const OPTION_PREMIUM = 'wdm_solr_premium';
+
+	/**
+	 * Get premium options array
+	 * @return array
+	 */
+	public function get_option_premium() {
+		return self::get_option( self::OPTION_PREMIUM, array() );
+	}
+
 }

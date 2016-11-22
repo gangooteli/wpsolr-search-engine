@@ -181,4 +181,11 @@ class WpSolrFilters {
 	 * Filter facets content to display.
 	 **/
 	const WPSOLR_FILTER_FACETS_CONTENT_TO_DISPLAY = 'wpsolr_filter_facets_content_to_display';
+
+
+	/**
+	 * @link ????
+	 * Filter to get a file path to include.
+	 **/
+	const WPSOLR_FILTER_INCLUDE_FILE = 'wpsolr_filter_include_file';
 }

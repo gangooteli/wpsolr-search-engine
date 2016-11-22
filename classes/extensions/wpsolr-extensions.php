@@ -90,7 +90,10 @@ class WpSolrExtensions {
 	const EXTENSION_TABLEPRESS = 'tablepress';
 
 	// Extension Geolocation
-	const OPTION_GEOLOCATION = 'wpsolr_geolocation';
+	const EXTENSION_GEOLOCATION = 'wpsolr_geolocation';
+
+	// Extension Premium
+	const EXTENSION_PREMIUM = 'wpsolr_premium';
 
 	/*
 	 * Extensions configuration
@@ -300,7 +303,7 @@ class WpSolrExtensions {
 					self::_CONFIG_OPTIONS_IS_ACTIVE_FIELD_NAME => 'is_extension_active',
 				),
 			),
-		self::OPTION_GEOLOCATION            =>
+		self::EXTENSION_GEOLOCATION         =>
 			array(
 				self::_CONFIG_EXTENSION_CLASS_NAME              => 'OptionGeoLocation',
 				self::_CONFIG_PLUGIN_IS_AUTO_ACTIVE             => true,
@@ -309,6 +312,18 @@ class WpSolrExtensions {
 				self::_CONFIG_EXTENSION_ADMIN_OPTIONS_FILE_PATH => 'geolocation/admin_options.inc.php',
 				self::_CONFIG_OPTIONS                           => array(
 					self::_CONFIG_OPTIONS_DATA                 => WPSOLR_Option::OPTION_GEOLOCATION,
+					self::_CONFIG_OPTIONS_IS_ACTIVE_FIELD_NAME => 'is_extension_active',
+				),
+			),
+		self::EXTENSION_PREMIUM             =>
+			array(
+				self::_CONFIG_EXTENSION_CLASS_NAME              => 'OptionPremium',
+				self::_CONFIG_PLUGIN_IS_AUTO_ACTIVE             => true,
+				self::_CONFIG_EXTENSION_DIRECTORY               => 'premium/',
+				self::_CONFIG_EXTENSION_FILE_PATH               => 'premium/option-premium.php',
+				self::_CONFIG_EXTENSION_ADMIN_OPTIONS_FILE_PATH => 'premium/admin_options.inc.php',
+				self::_CONFIG_OPTIONS                           => array(
+					self::_CONFIG_OPTIONS_DATA                 => WPSOLR_Option::OPTION_PREMIUM,
 					self::_CONFIG_OPTIONS_IS_ACTIVE_FIELD_NAME => 'is_extension_active',
 				),
 			),

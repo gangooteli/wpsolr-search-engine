@@ -15,7 +15,7 @@ class OptionLicenses extends WpSolrExtensions {
 	const AJAX_VERIFY_LICENCE = 'ajax_verify_licence';
 
 	// License types
-	const LICENSE_PACKAGE_CORE = 'LICENSE_PACKAGE_CORE';
+	const LICENSE_PACKAGE_PREMIUM = 'LICENSE_PACKAGE_CORE';
 	const LICENSE_PACKAGE_WOOCOMMERCE = 'LICENSE_PACKAGE_WOOCOMMERCE';
 	const LICENSE_PACKAGE_ACF = 'LICENSE_PACKAGE_ACF';
 	const LICENSE_PACKAGE_TYPES = 'LICENSE_PACKAGE_TYPES';
@@ -163,7 +163,7 @@ class OptionLicenses extends WpSolrExtensions {
 	function get_license_types() {
 
 		return array(
-			self::LICENSE_PACKAGE_CORE                => array(
+			self::LICENSE_PACKAGE_PREMIUM => array(
 				self::FIELD_LICENSE_MATCHING_REFERENCE => 'wpsolr_package_premium',
 				self::FIELD_LICENSE_TITLE              => 'Premium',
 				self::FIELD_DESCRIPTION                => '',

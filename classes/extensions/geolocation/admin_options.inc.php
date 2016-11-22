@@ -5,7 +5,7 @@
  */
 global $license_manager;
 
-WpSolrExtensions::require_once_wpsolr_extension( WpSolrExtensions::OPTION_GEOLOCATION, true );
+WpSolrExtensions::require_once_wpsolr_extension( WpSolrExtensions::EXTENSION_GEOLOCATION, true );
 
 $extension_options_name = WPSOLR_Option::OPTION_GEOLOCATION;
 $settings_fields_name   = 'extension_geolocation_opt';
@@ -13,7 +13,7 @@ $settings_fields_name   = 'extension_geolocation_opt';
 $options          = get_option( $extension_options_name, array(
 	'is_extension_active' => '0',
 ) );
-$is_plugin_active = WpSolrExtensions::is_plugin_active( WpSolrExtensions::OPTION_GEOLOCATION );
+$is_plugin_active = WpSolrExtensions::is_plugin_active( WpSolrExtensions::EXTENSION_GEOLOCATION );
 
 ?>
 

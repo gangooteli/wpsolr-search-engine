@@ -162,7 +162,7 @@ function wpsolr_admin_init() {
 	register_setting( 'extension_google_doc_embedder_opt', WPSOLR_Option::OPTION_GOOGLE_DOC_EMBEDDER );
 	register_setting( 'extension_tablepress_opt', WPSOLR_Option::OPTION_TABLEPRESS );
 	register_setting( 'extension_geolocation_opt', WPSOLR_Option::OPTION_GEOLOCATION );
-
+	register_setting( 'extension_premium_opt', WPSOLR_Option::OPTION_PREMIUM );
 
 }
 
@@ -458,117 +458,24 @@ function fun_set_solr_options() {
 									</div>
 									<div class="clear"></div>
 								</div>
-								<div class="wdm_row">
-									<div class='col_left'>
-										<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'This search is part of a network search', true, true ); ?>
-										<?php echo WPSOLR_Help::get_help( WPSOLR_Help::HELP_MULTI_SITE ); ?>
-									</div>
-									<div class='col_right'>
-										<select
-											name="wdm_solr_res_data[<?php echo WPSOLR_Option::OPTION_SEARCH_ITEM_GALAXY_MODE; ?>]">
-											<?php
-											$options = array(
-												array(
-													'code'  => '',
-													'label' => 'No, this is a standalone search'
-												),
-												array(
-													'code'     => WPSOLR_Option::OPTION_SEARCH_ITEM_IS_GALAXY_SLAVE,
-													'label'    => 'Yes, as one of local searches (suggestions will not work)',
-													'disabled' => $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE, true ),
-												),
-												array(
-													'code'     => WPSOLR_Option::OPTION_SEARCH_ITEM_IS_GALAXY_MASTER,
-													'label'    => 'Yes, as the global search (only with ajax)',
-													'disabled' => $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE, true ),
-												),
-											);
-											foreach ( $options as $option ) {
-												$selected = $solr_res_options[ WPSOLR_Option::OPTION_SEARCH_ITEM_GALAXY_MODE ] == $option['code'] ? 'selected' : '';
-												$disabled = isset( $option['disabled'] ) ? $option['disabled'] : '';
-												?>
-												<option
-													value="<?php echo $option['code'] ?>"
-													<?php echo $selected ?>
-													<?php echo $disabled ?>>
-													<?php echo $option['label'] ?>
-												</option>
-											<?php } ?>
 
-										</select>
-										<ul>
-											<li>- The global site searches in all local sites data</li>
-											<li>- Each local site searches in it's own data</li>
-										</ul>
-									</div>
-									<div class="clear"></div>
-								</div>
-								<div class="wdm_row">
-									<div class='col_left'>
-										<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Search template', true ); ?>
-										<?php echo WPSOLR_Help::get_help( WPSOLR_Help::HELP_SEARCH_TEMPLATE ); ?>
-									</div>
-									<div class='col_right'>
-										<select name="wdm_solr_res_data[search_method]">
-											<?php
-											$options = array(
-												array(
-													'code'     => 'use_current_theme_search_template',
-													'label'    => 'Use my current theme search template (no ajax, no \'Did you mean\', widget facets, widget sort)',
-													'disabled' => $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE ),
-												),
-												array(
-													'code'  => 'ajax',
-													'label' => 'Use WPSOLR custom search templates with Ajax (full WPSOLR features)'
-												),
-												array(
-													'code'  => 'ajax_with_parameters',
-													'label' => 'Use WPSOLR custom search templates with Ajax and show parameters in url (full WPSOLR features)'
-												)
-											);
-											foreach ( $options as $option ) {
-												$selected = $solr_res_options['search_method'] == $option['code'] ? 'selected' : '';
-												$disabled = isset( $option['disabled'] ) ? $option['disabled'] : '';
-												?>
-												<option
-													value="<?php echo $option['code'] ?>"
-													<?php echo $selected ?>
-													<?php echo $disabled ?>>
-													<?php echo $option['label'] ?>
-												</option>
-											<?php } ?>
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_MULTI_SITE ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
 
-										</select>
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_SEARCH_TEMPLATE ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
 
-										<br/><br/>
-										To display your search results, you can choose among:<br/>
-										<b>- Full integration to your theme, but less Solr features:</b> <br/>
-										Use your own theme's search templates customized with Widget 'WPSOLR
-										filters'.<br/>
-										<b>- Full Solr features, but less integration to your theme:</b><br/>
-										Use WPSOLR's custom search templates with your own css.<br/>
-									</div>
-									<div class="clear"></div>
-								</div>
-
-								<div class="wdm_row">
-									<div
-										class='col_left'><?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Ajax search page slug', true, true ); ?></div>
-									<div class='col_right'>
-										<input type='text'
-										       name='wdm_solr_res_data[<?php echo WPSOLR_Option::OPTION_SEARCH_AJAX_SEARCH_PAGE_SLUG; ?>]'
-										       placeholder="<?php echo WPSolrSearchSolrClient::_SEARCH_PAGE_SLUG; ?>"
-											<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE, true ); ?>
-											   value="<?php echo( ! empty( $solr_res_options[ WPSOLR_Option::OPTION_SEARCH_AJAX_SEARCH_PAGE_SLUG ] ) ? $solr_res_options[ WPSOLR_Option::OPTION_SEARCH_AJAX_SEARCH_PAGE_SLUG ] : '' ); ?>">
-										<br/>Enter a slug for the search page containing the shortcode for the Ajax
-										search results, [solr_search_shortcode].
-										<br/>By default, if empty,
-										'<?php echo WPSolrSearchSolrClient::_SEARCH_PAGE_SLUG; ?>' will be used.
-										<br/>This slug will be used as the target url in the WPSOLR Ajax search box
-										form.
-									</div>
-									<div class="clear"></div>
-								</div>
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_SEARCH_PAGE_SLUG ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
 
 								<div class="wdm_row">
 									<div class='col_left'>Do not load WPSOLR front-end css.<br/>You can then use
@@ -584,83 +491,25 @@ function fun_set_solr_options() {
 									</div>
 									<div class="clear"></div>
 								</div>
-								<div class="wdm_row">
-									<div class='col_left'>
-										<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Activate the "Infinite scroll" pagination', true ); ?>
-									</div>
-									<div class='col_right'>
-										<input type='checkbox'
-										       name='wdm_solr_res_data[<?php echo 'infinitescroll' ?>]'
-										       value='infinitescroll'
-											<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE ); ?>
-											<?php checked( 'infinitescroll', isset( $solr_res_options['infinitescroll'] ) ? $solr_res_options['infinitescroll'] : '?' ); ?>>
 
-										This feature loads the next page of results automatically when visitors
-										approach
-										the bottom of search page.
-									</div>
-									<div class="clear"></div>
-								</div>
-								<div class="wdm_row">
-									<div class='col_left'>
-										<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Show suggestions in the search box', true, true ); ?>
-									</div>
-									<div class='col_right'>
-										<select
-											name="wdm_solr_res_data[<?php echo WPSOLR_Option::OPTION_SEARCH_SUGGEST_CONTENT_TYPE; ?>]">
-											<?php
-											$options = array(
-												array(
-													'code'     => WPSOLR_Option::OPTION_SEARCH_SUGGEST_CONTENT_TYPE_NONE,
-													'label'    => 'No suggestions',
-													'disabled' => $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE, true ),
-												),
-												array(
-													'code'  => WPSOLR_Option::OPTION_SEARCH_SUGGEST_CONTENT_TYPE_KEYWORDS,
-													'label' => 'Suggest Keywords',
-												),
-												array(
-													'code'     => WPSOLR_Option::OPTION_SEARCH_SUGGEST_CONTENT_TYPE_POSTS,
-													'label'    => 'Suggest Products',
-													'disabled' => $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE, true ),
-												)
-											);
-											foreach ( $options as $option ) {
-												$selected = ( $solr_res_options[ WPSOLR_Option::OPTION_SEARCH_SUGGEST_CONTENT_TYPE ] === $option['code'] ) || ( empty( $solr_res_options[ WPSOLR_Option::OPTION_SEARCH_SUGGEST_CONTENT_TYPE ] ) && WPSOLR_Option::OPTION_SEARCH_SUGGEST_CONTENT_TYPE_KEYWORDS === $option['code'] ) ? 'selected' : '';
-												$disabled = isset( $option['disabled'] ) ? $option['disabled'] : '';
-												?>
-												<option
-													value="<?php echo $option['code'] ?>"
-													<?php echo $selected ?>
-													<?php echo $disabled ?>>
-													<?php echo $option['label'] ?>
-												</option>
-											<?php } ?>
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_SEARCH_INFINITE_SCROLL ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
 
-										</select>
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_SEARCH_SUGGESTIONS ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
 
-										By default, suggestions are shown only with the WPSOLR Ajax theme's search
-										form.
-										Use the jQuery selectors field below to show suggestions on your own theme's
-										search forms.
-									</div>
-									<div class="clear"></div>
-								</div>
-								<div class="wdm_row">
-									<div
-										class='col_left'><?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Attach the suggestions list to your own search boxes', true, true ); ?>
-										<?php echo WPSOLR_Help::get_help( WPSOLR_Help::HELP_JQUERY_SELECTOR ); ?>
-									</div>
-									<div class='col_right'>
-										<input type='text'
-										       name='wdm_solr_res_data[<?php echo WPSOLR_Option::OPTION_SEARCH_SUGGEST_JQUERY_SELECTOR; ?>]'
-										       placeholder=".search_box1, #search_box2, input.text_edit"
-											<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE, true ); ?>
-											   value="<?php echo( ! empty( $solr_res_options[ WPSOLR_Option::OPTION_SEARCH_SUGGEST_JQUERY_SELECTOR ] ) ? $solr_res_options[ WPSOLR_Option::OPTION_SEARCH_SUGGEST_JQUERY_SELECTOR ] : '' ); ?>">
-										Enter a jQuery selector for your search boxes.
-									</div>
-									<div class="clear"></div>
-								</div>
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_SEARCH_SUGGESTIONS_JQUERY_SELECTOR ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
+
 								<div class="wdm_row">
 									<div class='col_left'>Do not automatically trigger the search, when a user
 										clicks on the
@@ -675,19 +524,13 @@ function fun_set_solr_options() {
 									</div>
 									<div class="clear"></div>
 								</div>
-								<div class="wdm_row">
-									<div class='col_left'>
-										<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Display "Did you mean?" in search results header ?', true ); ?>
-									</div>
-									<div class='col_right'>
-										<input type='checkbox'
-										       name='wdm_solr_res_data[<?php echo 'spellchecker' ?>]'
-										       value='spellchecker'
-											<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE ); ?>
-											<?php checked( 'spellchecker', isset( $solr_res_options['spellchecker'] ) ? $solr_res_options['spellchecker'] : '?' ); ?>>
-									</div>
-									<div class="clear"></div>
-								</div>
+
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_SEARCH_DID_YOU_MEAN ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
+
 								<div class="wdm_row">
 									<div class='col_left'>Display number of results and current page</div>
 									<div class='col_right'>
@@ -778,7 +621,11 @@ function fun_set_solr_options() {
 
 					$custom_fields_error_message = '';
 
-					$posts      = get_post_types();
+					$posts = array( 'post', 'page', 'product' );
+					if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_INDEXING_POST_TYPES ) ) ) {
+						require_once $file_to_include;
+					}
+
 					$args       = array(
 						'public'   => true,
 						'_builtin' => false
@@ -849,26 +696,12 @@ function fun_set_solr_options() {
 
 								</div>
 
-								<div class="wdm_row">
-									<div class='col_left'>
-										<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Stop real-time indexing', true ); ?>
-									</div>
-									<div class='col_right'>
-										<input type='checkbox' name='wdm_solr_form_data[is_real_time]'
-										       value='1'
-											<?php checked( '1', isset( $solr_options['is_real_time'] ) ? $solr_options['is_real_time'] : '' ); ?>
-											<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE ); ?>
-										>
-										<br/>The Solr index will no more be updated as soon as a post/comment/attachment
-										is
-										added/saved/deleted, but only when you launch the indexing bach.
-										<br/> Useful to load a large number of posts, for instance coupons/products
-										from
-										affiliate datafeeds.
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_INDEXING_STOP_REAL_TIME ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
 
-									</div>
-									<div class="clear"></div>
-								</div>
 								<div class="wdm_row">
 									<div class='col_left'>
 										Index post excerpt.<br/>
@@ -910,9 +743,11 @@ function fun_set_solr_options() {
 									</div>
 									<div class="clear"></div>
 								</div>
+
 								<div class="wdm_row">
-									<div
-										class='col_left'><?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Post types to be indexed', true ); ?></div>
+									<div class='col_left'>
+										Post types to be indexed
+									</div>
 									<div class='col_right'>
 										<input type='hidden' name='wdm_solr_form_data[p_types]' id='p_types'>
 										<?php
@@ -923,7 +758,7 @@ function fun_set_solr_options() {
 										// Selected first
 										foreach ( $post_types as $type ) {
 											if ( strpos( $post_types_opt, $type ) !== false ) {
-												$disabled = ( ( $type === 'post' ) || ( $type === 'page' ) || ( $type === 'product' ) ) ? '' : $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE );
+												$disabled = '';
 
 												?>
 												<input type='checkbox' name='post_tys'
@@ -938,7 +773,7 @@ function fun_set_solr_options() {
 										// Unselected 2nd
 										foreach ( $post_types as $type ) {
 											if ( strpos( $post_types_opt, $type ) === false ) {
-												$disabled = ( ( $type === 'post' ) || ( $type === 'page' ) || ( $type === 'product' ) ) ? '' : $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE );
+												$disabled = '';
 
 												?>
 												<input type='checkbox' name='post_tys'
@@ -956,214 +791,23 @@ function fun_set_solr_options() {
 									<div class="clear"></div>
 								</div>
 
-								<div class="wdm_row">
-									<div class='col_left'>
-										<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Custom taxonomies to be indexed', true ); ?>
-									</div>
-									<div class='col_right'>
-										<div class='cust_tax'><!--new div class given-->
-											<input type='hidden' name='wdm_solr_form_data[taxonomies]'
-											       id='tax_types'>
-											<?php
-											$tax_types_opt = $solr_options['taxonomies'];
-											$disabled      = $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE );
-											if ( count( $taxonomies ) > 0 ) {
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_INDEXING_TAXONOMIES ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
 
-												// Selected first
-												foreach ( $taxonomies as $type ) {
-													if ( strpos( $tax_types_opt, $type . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ) !== false ) {
-														?>
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_INDEXING_CUSTOM_FIELDS ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
 
-														<input type='checkbox' name='taxon'
-														       value='<?php echo $type . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ?>'
-															<?php echo $disabled; ?>
-															   checked
-														> <?php echo $type ?> <br>
-														<?php
-													}
-												}
-
-												// Unselected 2nd
-												foreach ( $taxonomies as $type ) {
-													if ( strpos( $tax_types_opt, $type . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ) === false ) {
-														?>
-
-														<input type='checkbox' name='taxon'
-														       value='<?php echo $type . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ?>'
-															<?php echo $disabled; ?>
-														> <?php echo $type ?> <br>
-														<?php
-													}
-												}
-
-											} else {
-												echo 'None';
-											} ?>
-										</div>
-									</div>
-									<div class="clear"></div>
-								</div>
-
-								<div class="wdm_row">
-									<div class='col_left'>
-										<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Custom Fields to be indexed', true ); ?>
-									</div>
-
-									<div class='col_right'>
-										<?php
-										if ( ! empty( $custom_fields_error_message ) ) {
-											echo sprintf( '<div class="error-message">%s</div>', $custom_fields_error_message );
-										}
-										?>
-
-										<input type='hidden' name='wdm_solr_form_data[cust_fields]'
-										       id='field_types'>
-
-										<div class='cust_fields'><!--new div class given-->
-											<?php
-											$field_types_opt         = $solr_options['cust_fields'];
-											$custom_field_properties = WPSOLR_Global::getOption()->get_option_index_custom_field_properties();
-											$disabled                = $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE );
-											if ( count( $keys ) > 0 ) {
-												// sort custom fields
-												asort( $keys );
-
-												// Show selected first
-												foreach ( $keys as $key ) {
-													if ( strpos( $field_types_opt, $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ) !== false ) {
-														$is_indexed_custom_field = true;
-														?>
-
-														<div class="wpsolr_custom_field_selected">
-															<input type='checkbox' name='cust_fields'
-															       value='<?php echo $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ?>'
-																<?php echo $disabled; ?>
-																   checked>
-
-															<b><?php echo $key ?></b>
-
-															<br/>
-															<div style="margin-left:30px;">
-																<select
-																	<?php
-																	$solr_dynamic_types = WpSolrSchema::get_solr_dynamic_entensions();
-																	$field_solr_type    = ! empty( $custom_field_properties[ $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ] ) && ! empty( $custom_field_properties[ $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ][ WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTY_SOLR_TYPE ] )
-																		? $custom_field_properties[ $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ][ WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTY_SOLR_TYPE ]
-																		: WpSolrSchema::get_solr_dynamic_entension_id_by_default();
-																	if ( $disabled ) {
-																		echo ' disabled ';
-																	}
-																	?>
-																	name="<?php echo sprintf( '%s[%s][%s][%s]', 'wdm_solr_form_data', WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTIES, $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING, WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTY_SOLR_TYPE ); ?>">
-																	<?php
-																	foreach ( $solr_dynamic_types as $solr_dynamic_type_id => $solr_dynamic_type_array ) {
-																		echo sprintf( '<option value="%s" %s %s>%s</option>',
-																			$solr_dynamic_type_id,
-																			selected( $field_solr_type, $solr_dynamic_type_id, false ),
-																			$solr_dynamic_type_array['disabled'],
-																			WpSolrSchema::get_solr_dynamic_entension_label( $solr_dynamic_type_array )
-																		);
-																	}
-																	?>
-																</select>
-
-																<?php //echo WPSOLR_Help::get_help( $solr_dynamic_types[ $field_solr_type ]['help_id'] ); ?>
-
-																<select
-																	<?php
-																	$field_action_id = ! empty( $custom_field_properties[ $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ] ) && ! empty( $custom_field_properties[ $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ][ WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTY_CONVERSION_ERROR_ACTION ] )
-																		? $custom_field_properties[ $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ][ WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTY_CONVERSION_ERROR_ACTION ]
-																		: WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTY_CONVERSION_ERROR_ACTION_IGNORE_FIELD;
-																	if ( $disabled ) {
-																		echo ' disabled ';
-																	}
-																	?>
-																	name="<?php echo sprintf( '%s[%s][%s][%s]', 'wdm_solr_form_data', WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTIES, $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING, WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTY_CONVERSION_ERROR_ACTION ); ?>">
-																	<?php
-																	foreach (
-																		array(
-																			WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTY_CONVERSION_ERROR_ACTION_IGNORE_FIELD => 'Use empty value if conversion error',
-																			WPSOLR_Option::OPTION_INDEX_CUSTOM_FIELD_PROPERTY_CONVERSION_ERROR_ACTION_THROW_ERROR  => 'Stop indexing at first conversion error',
-																		) as $action_id => $action_text
-																	) {
-																		echo sprintf( '<option value="%s" %s>%s</option>', $action_id, selected( $field_action_id, $action_id, false ), $action_text );
-																	}
-																	?>
-																</select>
-															</div>
-
-														</div>
-
-														<?php
-													}
-												}
-
-												// Show unselected 2nd
-												foreach ( $keys as $key ) {
-													if ( strpos( $field_types_opt, $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ) === false ) {
-														?>
-
-														<input type='checkbox' name='cust_fields'
-														       value='<?php echo $key . WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ?>'
-															<?php echo $disabled; ?>
-														> <?php echo $key ?>
-														<br>
-														<?php
-													}
-												}
-
-											} else {
-												echo 'None';
-											}
-											?>
-										</div>
-									</div>
-									<div class="clear"></div>
-								</div>
-
-								<div class="wdm_row">
-									<div class='col_left'>
-										<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Attachment types to be indexed', true ); ?>
-									</div>
-									<div class='col_right'>
-										<input type='hidden' name='wdm_solr_form_data[attachment_types]'
-										       id='attachment_types'>
-										<?php
-										$attachment_types_opt = $solr_options['attachment_types'];
-										$disabled             = $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE );
-										// sort attachments
-										asort( $allowed_attachments_types );
-
-										// Selected first
-										foreach ( $allowed_attachments_types as $type ) {
-											if ( strpos( $attachment_types_opt, $type ) !== false ) {
-												?>
-												<input type='checkbox' name='attachment_types'
-												       value='<?php echo $type ?>'
-													<?php echo $disabled; ?>
-													   checked> <?php echo $type ?>
-												<br>
-												<?php
-											}
-										}
-
-										// Unselected 2nd
-										foreach ( $allowed_attachments_types as $type ) {
-											if ( strpos( $attachment_types_opt, $type ) === false ) {
-												?>
-												<input type='checkbox' name='attachment_types'
-												       value='<?php echo $type ?>'
-													<?php echo $disabled; ?>
-												> <?php echo $type ?>
-												<br>
-												<?php
-											}
-										}
-
-										?>
-									</div>
-									<div class="clear"></div>
-								</div>
+								<?php
+								if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_INDEXING_ATTACHMENTS ) ) ) {
+									require_once $file_to_include;
+								}
+								?>
 
 								<div class="wdm_row">
 									<div class='col_left'>Index Comments</div>
@@ -1202,192 +846,9 @@ function fun_set_solr_options() {
 					break;
 
 				case 'field_opt':
-					$solr_options = get_option( 'wdm_solr_form_data' );
-					$checked_fls = $solr_options['cust_fields'] . ',' . $solr_options['taxonomies'];
-
-					$checked_fields = explode( ',', $checked_fls );
-					$img_path       = plugins_url( 'images/plus.png', __FILE__ );
-					$minus_path     = plugins_url( 'images/minus.png', __FILE__ );
-					$built_in       = array(
-						WpSolrSchema::_FIELD_NAME_CONTENT,
-						WpSolrSchema::_FIELD_NAME_TITLE,
-						WpSolrSchema::_FIELD_NAME_COMMENTS,
-						WpSolrSchema::_FIELD_NAME_TYPE,
-						WpSolrSchema::_FIELD_NAME_AUTHOR,
-						WpSolrSchema::_FIELD_NAME_CATEGORIES,
-						WpSolrSchema::_FIELD_NAME_TAGS
-					);
-					$built_in       = array_merge( $built_in, $checked_fields );
-
-					?>
-					<div id="solr-facets-options" class="wdm-vertical-tabs-content">
-						<form action="options.php" method="POST" id='fac_settings_form'>
-							<?php
-							settings_fields( 'solr_search_field_options' );
-							$solr_search_fields_is_active            = WPSOLR_Global::getOption()->get_search_fields_is_active();
-							$solr_search_fields_boosts_options       = WPSOLR_Global::getOption()->get_search_fields_boosts();
-							$solr_search_fields_terms_boosts_options = WPSOLR_Global::getOption()->get_search_fields_terms_boosts();
-							$selected_values                         = WPSOLR_Global::getOption()->get_option_search_fields_str();
-							$selected_array                          = WPSOLR_Global::getOption()->get_option_search_fields();
-							?>
-							<div class='wrapper'>
-								<h4 class='head_div'>Search fields boosts Options</h4>
-
-								<div class="wdm_row">
-									<div class='col_left'>Activate the boosts</div>
-									<div class='col_right'>
-										<input type='checkbox'
-										       name='<?php echo WPSOLR_Option::OPTION_SEARCH_FIELDS; ?>[<?php echo WPSOLR_Option::OPTION_SEARCH_FIELDS_IS_ACTIVE; ?>]'
-										       value='1' <?php checked( $solr_search_fields_is_active ); ?>>
-
-										First, select among the fields indexed (see below) those you want to search
-										in,
-										then define their boosts.
-										Select none if you want to use the default search configuration.
-
-									</div>
-									<div class="clear"></div>
-								</div>
-
-								<div class="wdm_row">
-									<div class='avail_fac' style="width:90%">
-										<input type='hidden' id='select_fac'
-										       name='<?php echo WPSOLR_Option::OPTION_SEARCH_FIELDS; ?>[<?php echo WPSOLR_Option::OPTION_SEARCH_FIELDS_FIELDS; ?>]'
-										       value='<?php echo $selected_values ?>'>
-
-										<ul id="sortable1" class="wdm_ul connectedSortable">
-											<?php
-											if ( $selected_values != '' ) {
-												foreach ( $selected_array as $selected_val ) {
-													if ( $selected_val !== '' ) {
-														if ( substr( $selected_val, ( strlen( $selected_val ) - 4 ), strlen( $selected_val ) ) == WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ) {
-															$dis_text = substr( $selected_val, 0, ( strlen( $selected_val ) - 4 ) );
-														} else {
-															$dis_text = $selected_val;
-														}
-														?>
-														<li id='<?php echo $selected_val; ?>'
-														    class='ui-state-default facets facet_selected'>
-
-															<img src='<?php echo $img_path; ?>'
-															     class='plus_icon'
-															     style='display:none'>
-															<img src='<?php echo $minus_path ?>'
-															     class='minus_icon'
-															     style='display:inline'
-															     title='Click to remove the field from the search'>
-															<span style="float:left;width: 80%;">
-																<?php echo $dis_text; ?>
-															</span>
-
-															<div>&nbsp;</div>
-
-															<?php
-															$search_field_boost = empty( $solr_search_fields_boosts_options[ $selected_val ] )
-																? '' : $solr_search_fields_boosts_options[ $selected_val ];
-															?>
-															<div class="wdm_row" style="top-margin:5px;">
-																<div class='col_left'>Boost field</div>
-																<div class='col_right'>
-																	<input type='input'
-																		<?php echo empty( $search_field_boost ) ? 'style="border-color:red;"' : ''; ?>
-																		   class='wpsolr_field_boost_factor_class'
-																		   name='<?php echo WPSOLR_Option::OPTION_SEARCH_FIELDS; ?>[<?php echo WPSOLR_Option::OPTION_SEARCH_FIELDS_BOOST; ?>][<?php echo $selected_val; ?>]'
-																		   value='<?php echo esc_attr( $search_field_boost ); ?>'
-																	/>
-																	<?php echo empty( $search_field_boost ) ? "<span class='res_err'>Please enter a number > 0. Examples: '0.5', '2', '3.1'</span>" : ''; ?>
-																	<p>
-																		Set a boost factor to increase or decrease
-																		that
-																		particular field's importance in the search.
-																		Like '0.4', '2', '3.5'. Default value is
-																		'1'.
-																		<a target="__new"
-																		   href="https://cwiki.apache.org/confluence/display/solr/The+DisMax+Query+Parser#TheDisMaxQueryParser-Theqf(QueryFields)Parameter">See
-																			Solr boost</a>
-																	</p>
-
-																</div>
-																<div class="clear"></div>
-															</div>
-
-															<?php
-															$solr_search_fields_terms_boosts = empty( $solr_search_fields_terms_boosts_options[ $selected_val ] )
-																? '' : $solr_search_fields_terms_boosts_options[ $selected_val ];
-															?>
-															<div class="wdm_row" style="top-margin:5px;">
-																<div class='col_left'>Boost values</div>
-																<div class='col_right'>
-																	<textarea
-																		class='wpsolr_field_boost_term_factor_class'
-																		rows="5"
-																		placeholder="solr^0.5&#10;apache solr^2.5&#10;apache solr search^3"
-																		name="<?php echo WPSOLR_Option::OPTION_SEARCH_FIELDS; ?>[<?php echo WPSOLR_Option::OPTION_SEARCH_FIELDS_TERMS_BOOST; ?>][<?php echo $selected_val; ?>]"
-																	><?php echo esc_attr( $solr_search_fields_terms_boosts ); ?></textarea>
-
-																	<p>
-																		Boost results that have
-																		field '<?php echo $selected_val; ?>' that
-																		matches
-																		a specific value
-																		<a target="__new"
-																		   href="https://cwiki.apache.org/confluence/display/solr/The+DisMax+Query+Parser#TheDisMaxQueryParser-Thebq(BoostQuery)Parameter">See
-																			Solr boost query</a>
-																	</p>
-
-																</div>
-																<div class="clear"></div>
-															</div>
-
-														</li>
-
-													<?php }
-												}
-											}
-											foreach ( $built_in as $built_fac ) {
-												if ( $built_fac != '' ) {
-													$buil_fac = strtolower( $built_fac );
-													if ( substr( $buil_fac, ( strlen( $buil_fac ) - 4 ), strlen( $buil_fac ) ) == WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ) {
-														$dis_text = substr( $buil_fac, 0, ( strlen( $buil_fac ) - 4 ) );
-													} else {
-														$dis_text = $buil_fac;
-													}
-
-													if ( ! in_array( $buil_fac, $selected_array ) ) {
-
-														echo "<li id='$buil_fac' class='ui-state-default facets'>$dis_text
-                                                                                                    <img src='$img_path'  class='plus_icon' style='display:inline' title='Click to add the field from the search'>
-                                                                                                <img src='$minus_path' class='minus_icon' style='display:none'></li>";
-													}
-												}
-											}
-											?>
-
-
-										</ul>
-									</div>
-
-									<div class="clear"></div>
-								</div>
-
-								<div class='wdm_row'>
-									<div class="submit">
-										<?php if ( $license_manager->get_license_is_activated( OptionLicenses::LICENSE_PACKAGE_CORE ) ) { ?>
-											<div
-												class="wpsolr_premium_block_class"><?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, OptionLicenses::TEXT_LICENSE_ACTIVATED, true, true ); ?></div>
-											<input name="save_fields_options_form" id="save_fields_options_form"
-											       type="submit" class="button-primary wdm-save"
-											       value="Save Options"/>
-										<?php } else { ?>
-											<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Save Options', true, true ); ?>
-											<br/>
-										<?php } ?>
-									</div>
-								</div>
-							</div>
-						</form>
-					</div>
-					<?php
+					if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_SEARCH_BOOSTS ) ) ) {
+						require_once $file_to_include;
+					}
 					break;
 
 				case 'facet_opt':
@@ -1447,8 +908,8 @@ function fun_set_solr_options() {
 
 										<ul id="sortable1" class="wdm_ul connectedSortable">
 											<?php
+
 											if ( $selected_facets_value != '' ) {
-												$disabled = $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE );
 												foreach ( $selected_array as $selected_val ) {
 													if ( $selected_val != '' ) {
 														if ( substr( $selected_val, ( strlen( $selected_val ) - 4 ), strlen( $selected_val ) ) == WpSolrSchema::_SOLR_DYNAMIC_TYPE_STRING ) {
@@ -1456,8 +917,6 @@ function fun_set_solr_options() {
 														} else {
 															$dis_text = $selected_val;
 														}
-														$is_hierarchy       = isset( $selected_facets_is_hierarchy[ $selected_val ] );
-														$can_show_hierarchy = in_array( $selected_val, array_map( 'strtolower', $built_in_can_show_hierarchy ) );
 														?>
 														<li id='<?php echo $selected_val; ?>'
 														    class='ui-state-default facets facet_selected'>
@@ -1472,89 +931,23 @@ function fun_set_solr_options() {
 															     title='Click to Remove the filter'>
 															<br/>
 
-															<div class="wdm_row" style="top-margin:5px;">
-																<div class='col_left'>
-																	<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, sprintf( '%s label', ucfirst( $selected_val ) ), true ); ?>
-																</div>
-																<?php
-																$facet_label = ! empty( $selected_facets_labels[ $selected_val ] ) ? $selected_facets_labels[ $selected_val ] : '';
-																?>
-																<div class='col_right'>
-																	<input type='text'
-																	       name='wdm_solr_facet_data[<?php echo WPSOLR_Option::OPTION_FACET_FACETS_LABEL; ?>][<?php echo $selected_val; ?>]'
-																	       value='<?php echo esc_attr( $facet_label ); ?>'
-																		<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE ); ?>
-																	/>
-																	<p>
-																		Will be shown on the front-end (and
-																		translated in WPML/POLYLANG string modules).
-																		Leave empty if you wish to use the current
-																		facet
-																		name "<?php echo $dis_text; ?>".
-																	</p>
-
-																</div>
-																<div class="clear"></div>
-															</div>
 															<?php
-															if ( 'type' === $selected_val ) {
-																$all_post_types = get_post_types();
-																$post_types     = array( 'attachment' );
-																foreach ( $all_post_types as $post_type ) {
-																	if ( $post_type != 'attachment' && $post_type != 'revision' && $post_type != 'nav_menu_item' ) {
-																		array_push( $post_types, $post_type );
-																	}
-																}
+															if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_FACET_LABEL ) ) ) {
+																require $file_to_include;
+															}
+															?>
 
-																foreach ( $post_types as $post_type ) {
-																	?>
-																	<div class="wdm_row" style="top-margin:5px;">
-																		<div class='col_left'>
-																			<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, sprintf( '%s label', ucfirst( $post_type ) ), true ); ?>
-																		</div>
-																		<?php
-																		$facet_label = ( ! empty( $selected_facets_item_labels[ $selected_val ] ) && ! empty( $selected_facets_item_labels[ $selected_val ][ $post_type ] ) )
-																			? $selected_facets_item_labels[ $selected_val ][ $post_type ] : '';
-																		?>
-																		<div class='col_right'>
-																			<input type='text'
-																			       name='wdm_solr_facet_data[<?php echo WPSOLR_Option::OPTION_FACET_FACETS_ITEMS_LABEL; ?>][<?php echo $selected_val; ?>][<?php echo $post_type; ?>]'
-																			       value='<?php echo esc_attr( $facet_label ); ?>'
-																				<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE ); ?>
-																			/>
-																			<p>
-																				Will be shown on the front-end (and
-																				translated in WPML/POLYLANG string
-																				modules).
-																				Leave empty if you wish to use the
-																				current facet
-																				name "<?php echo $post_type; ?>".
-																			</p>
+															<?php
+															if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_FACET_POST_TYPE ) ) ) {
+																require $file_to_include;
+															}
+															?>
 
-																		</div>
-																		<div class="clear"></div>
-																	</div>
-																<?php }
-															} ?>
-
-															<?php if ( $can_show_hierarchy ) { ?>
-																<div class="wdm_row" style="top-margin:5px;">
-																	<div class='col_left'>
-																		<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Show the hierarchy', true ); ?>
-																	</div>
-																	<div class='col_right'>
-																		<input type='checkbox'
-																		       name='wdm_solr_facet_data[<?php echo WPSOLR_Option::OPTION_FACET_FACETS_TO_SHOW_AS_HIERARCH; ?>][<?php echo $selected_val; ?>]'
-																		       value='1'
-																			<?php echo checked( $is_hierarchy ); ?>
-																			<?php echo ( empty( $disabled ) && $can_show_hierarchy ) ? '' : 'disabled'; ?>
-																		/>
-																		Select to display the facet as a tree
-
-																	</div>
-																	<div class="clear"></div>
-																</div>
-															<?php } ?>
+															<?php
+															if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_FACET_HIERARCHY ) ) ) {
+																require $file_to_include;
+															}
+															?>
 
 														</li>
 
@@ -1680,30 +1073,11 @@ function fun_set_solr_options() {
 												     title='Click to Remove the sort item'>
 												<br/>
 
-												<div class="wdm_row" style="top-margin:5px;">
-													<div class='col_left'>
-														<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, sprintf( '%s label', ucfirst( $dis_text ) ), true ); ?>
-													</div>
-													<?php
-													$sortby_label = ! empty( $selected_sortby_labels[ $sort_code ] ) ? $selected_sortby_labels[ $sort_code ] : '';
-													?>
-													<div class='col_right'>
-														<input type='text'
-														       name='wdm_solr_sortby_data[<?php echo WPSOLR_Option::OPTION_SORTBY_ITEM_LABELS; ?>][<?php echo $sort_code; ?>]'
-														       value='<?php echo esc_attr( $sortby_label ); ?>'
-															<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE ); ?>
-														/>
-														<p>
-															Will be shown on the front-end (and
-															translated in WPML/POLYLANG string modules).
-															Leave empty if you wish to use the current
-															facet
-															name "<?php echo $dis_text; ?>".
-														</p>
-
-													</div>
-													<div class="clear"></div>
-												</div>
+												<?php
+												if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_SORT_LABEL ) ) ) {
+													require $file_to_include;
+												}
+												?>
 
 												<?php
 												}
@@ -1765,6 +1139,7 @@ function fun_set_solr_options() {
 		<?php
 
 		$subtabs = array(
+			'extension_premium_opt'             => 'Premium',
 			'extension_geolocation_opt'         => 'Geolocation',
 			'extension_woocommerce_opt'         => 'WooCommerce',
 			'extension_acf_opt'                 => 'ACF',
@@ -1838,7 +1213,11 @@ function fun_set_solr_options() {
 				break;
 
 			case 'extension_geolocation_opt':
-				WpSolrExtensions::require_once_wpsolr_extension_admin_options( WpSolrExtensions::OPTION_GEOLOCATION );
+				WpSolrExtensions::require_once_wpsolr_extension_admin_options( WpSolrExtensions::EXTENSION_GEOLOCATION );
+				break;
+
+			case 'extension_premium_opt':
+				WpSolrExtensions::require_once_wpsolr_extension_admin_options( WpSolrExtensions::EXTENSION_PREMIUM );
 				break;
 		}
 
@@ -1956,37 +1335,19 @@ function fun_set_solr_options() {
 								<span class='res_err'></span><br>
 							</div>
 							<div class="clear"></div>
-							<div class='col_left'>
-								<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Display debug infos during indexing', true ); ?>
-							</div>
-							<div class='col_right'>
 
-								<input type='checkbox'
-								       id='is_debug_indexing'
-								       name='wdm_solr_operations_data[is_debug_indexing][<?php echo $current_index_indice ?>]'
-								       value='is_debug_indexing'
-									<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE ); ?>
-									<?php checked( 'is_debug_indexing', isset( $solr_operations_options['is_debug_indexing'][ $current_index_indice ] ) ? $solr_operations_options['is_debug_indexing'][ $current_index_indice ] : '' ); ?>>
-								<span class='res_err'></span><br>
-							</div>
-							<div class="clear"></div>
-							<div class='col_left'>
-								<?php echo $license_manager->show_premium_link( OptionLicenses::LICENSE_PACKAGE_CORE, 'Re-index all the data in place.', true ); ?>
-							</div>
-							<div class='col_right'>
+							<?php
+							if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_BATCH_DEBUG ) ) ) {
+								require $file_to_include;
+							}
+							?>
 
-								<input type='checkbox'
-								       id='is_reindexing_all_posts'
-								       name='is_reindexing_all_posts'
-								       value='is_reindexing_all_posts'
-									<?php echo $license_manager->get_license_enable_html_code( OptionLicenses::LICENSE_PACKAGE_CORE ); ?>
-									<?php checked( true, false ); ?>>
+							<?php
+							if ( file_exists( $file_to_include = apply_filters( WpSolrFilters::WPSOLR_FILTER_INCLUDE_FILE, WPSOLR_Help::HELP_BATCH_MODE_REPLACE ) ) ) {
+								require $file_to_include;
+							}
+							?>
 
-								If you check this option, it will restart the indexing from start, without deleting the
-								data already in the Solr index.
-								<span class='res_err'></span><br>
-							</div>
-							<div class="clear"></div>
 						</div>
 						<div class="wdm_row">
 							<div class="submit">
