@@ -5,6 +5,11 @@
       <BehatSettings behat_path="$PROJECT_DIR$" />
     </behat_settings>
   </component>
+  <component name="PhpInterpreters">
+    <interpreters>
+      <interpreter home="/usr/local/php5/bin/php" id="1c6206e9-b7fb-4a31-9f1a-526b08065763" name="Interpreter for Composer" debugger_id="php.debugger.XDebug" />
+    </interpreters>
+  </component>
   <component name="PhpProjectServersManager">
     <servers>
       <server host="dev-wpsolr-search-engine.dev" id="4901cc8c-54ff-49bb-a84a-f7d3ba9dee4d" name="dev-wpsolr-search-engine.dev" use_path_mappings="true">

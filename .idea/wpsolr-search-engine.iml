@@ -2,26 +2,40 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$/../../..">
-      <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/solarium/solarium" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/event-dispatcher" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/twig/twig" />
+      <excludeFolder url="file://$MODULE_DIR$/../wpsolr-core/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/../wpsolr-core/vendor/solarium/solarium" />
+      <excludeFolder url="file://$MODULE_DIR$/../wpsolr-core/vendor/symfony/event-dispatcher" />
+      <excludeFolder url="file://$MODULE_DIR$/../wpsolr-core/vendor/twig/twig" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library name="PHARS">
         <CLASSES>
-          <root url="phar://$MODULE_DIR$/composer.phar/" />
+          <root url="phar://$MODULE_DIR$/../wpsolr-core/composer.phar/" />
+          <root url="phar://$MODULE_DIR$/wpsolr-core/composer.phar/" />
           <root url="phar://$MODULE_DIR$/../plugin-generator/composer.phar/" />
-          <root url="phar://$MODULE_DIR$/../wpsolrcommerce/composer.phar/" />
+          <root url="phar://$MODULE_DIR$/../wpsolr-pro/wpsolr-core/composer.phar/" />
           <root url="phar://$MODULE_DIR$/../wpsolrcommerce/vendor/twig/twig/test/Twig/Tests/Loader/Fixtures/phar/phar-sample.phar/" />
+          <root url="phar://$MODULE_DIR$/../wpsolrcommerce/composer.phar/" />
         </CLASSES>
         <SOURCES>
-          <root url="phar://$MODULE_DIR$/composer.phar/" />
+          <root url="phar://$MODULE_DIR$/../wpsolr-core/composer.phar/" />
+          <root url="phar://$MODULE_DIR$/wpsolr-core/composer.phar/" />
           <root url="phar://$MODULE_DIR$/../plugin-generator/composer.phar/" />
-          <root url="phar://$MODULE_DIR$/../wpsolrcommerce/composer.phar/" />
+          <root url="phar://$MODULE_DIR$/../wpsolr-pro/wpsolr-core/composer.phar/" />
           <root url="phar://$MODULE_DIR$/../wpsolrcommerce/vendor/twig/twig/test/Twig/Tests/Loader/Fixtures/phar/phar-sample.phar/" />
+          <root url="phar://$MODULE_DIR$/../wpsolrcommerce/composer.phar/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="PHP Runtime" type="php">
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/stubs/standard" />
+        </CLASSES>
+        <SOURCES>
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/stubs/standard" />
         </SOURCES>
       </library>
     </orderEntry>
